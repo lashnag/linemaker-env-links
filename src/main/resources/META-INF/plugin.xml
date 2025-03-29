@@ -1,0 +1,50 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>ru.lashnev.LineMakerEnvLinks</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>CompanyInfraLinks</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="lashnag@qmail.com" url="https://t.me/lashnag">Lashnev</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description><![CDATA[
+    Create links to Company infrastructures.<br>
+    <ul>
+        <li>Kibana</li>
+        <li>Vault</li>
+        <li>Openpace</li>
+        <li>TeamCity</li>
+        <li>Common Auth</li>
+        <li>NPD Editor</li>
+    </ul>
+  ]]></description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.java</depends>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.kotlin</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <codeInsight.lineMarkerProvider language="JAVA" implementationClass="ru.lashnev.linemakerenvlinks.margins.MarginLinksProvider"/>
+        <codeInsight.lineMarkerProvider language="kotlin" implementationClass="ru.lashnev.linemakerenvlinks.margins.MarginLinksProvider"/>
+        <codeInsight.lineMarkerProvider language="yaml" implementationClass="ru.lashnev.linemakerenvlinks.margins.MarginLinksProvider"/>
+    </extensions>
+    <actions>
+        <group id="MyCustomGroup" text="Custom Actions">
+            <action id="TestSimpleAction" class="ru.lashnev.linemakerenvlinks.actions.TestSimpleAction" text="Test Simple Action">
+                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            </action>
+        </group>
+    </actions>
+</idea-plugin>

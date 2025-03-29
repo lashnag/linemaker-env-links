@@ -1,0 +1,28 @@
+popupActions:
+  - fileName: "ApiProperties"
+    name: "Открыть рандомную ссылку"
+    icon: "/icons/kibana-16x16.svg"
+    urlWithParameters: "https://ya.ru"
+infraByMethodCalled:
+  - callerClass: "org.slf4j.Logger"
+    runAction:
+      description: "Открыть логи"
+      icon: "/icons/kibana-16x16.svg"
+      openUrlActions:
+        - description: "Открыть логи в тесте"
+          icon: "/icons/kibana-16x16.svg"
+          urlWithParameters: "https://kibana-test.com/app/discover#/?_a=(columns:!(_source),filters:!((query:(match_phrase:(application.keyword:{appName}))),(query:(match_phrase:(app_environment:test)))),query:(language:lucene,query:'{queryString}'),sort:!())"
+        - description: "Открыть логи в проде"
+          icon: "/icons/kibana-16x16.svg"
+          urlWithParameters: "https://kibana-prod.com/app/discover#/?_a=(columns:!(_source),filters:!((query:(match_phrase:(application.keyword:{appName}))),(query:(match_phrase:(app_environment:test)))),query:(language:lucene,query:'{queryString}'),sort:!())"
+  - callerClass: "ru.lashnev.forwarderbackend.services.resend.OcrClientService"
+    openUrlAction:
+      description: "Открыть докер хаб"
+      icon: "/icons/kibana-16x16.svg"
+      urlWithParameters: "https://hub.docker.com/"
+infraByAnnotation:
+  - callerClass: "org.springframework.boot.context.properties.ConfigurationProperties"
+    openUrlAction:
+      description: "Открыть докер google"
+      icon: "/icons/kibana-16x16.svg"
+      urlWithParameters: "https://google.com/"
