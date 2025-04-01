@@ -51,7 +51,7 @@ abstract class BaseCustomAction : AnAction(), DumbAware {
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.EDT
+        return ActionUpdateThread.BGT
     }
 
     abstract fun actionNumber(): Int
