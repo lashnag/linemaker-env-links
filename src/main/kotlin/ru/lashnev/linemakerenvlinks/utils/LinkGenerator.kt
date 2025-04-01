@@ -1,4 +1,4 @@
-package ru.lashnev.linemakerenvlinks.margins
+package ru.lashnev.linemakerenvlinks.utils
 
 import ai.grazie.utils.capitalize
 import com.intellij.psi.PsiAnnotation
@@ -12,6 +12,16 @@ import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import ru.lashnev.linemakerenvlinks.info.ProjectInfo
 
 class LinkGenerator {
+
+    fun replaceParameters(link: String, projectInfo: ProjectInfo): String {
+        var linkWithReplacedParameters = link
+        ProjectInfo::class.java.methods.forEach { method ->
+            val value = method.invoke(projectInfo).toString()
+            val placeholder = "{${method.name}}"
+            linkWithReplacedParameters = linkWithReplacedParameters.replace(placeholder, value)
+        }
+        return linkWithReplacedParameters
+    }
 
     fun replaceParameters(link: String, psiElement: PsiElement, projectInfo: ProjectInfo): String {
         var linkWithReplacedParameters = link

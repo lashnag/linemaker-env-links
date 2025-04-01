@@ -21,14 +21,14 @@ class MarginLinksProvider : LineMarkerProvider {
     ) {
         super.collectSlowLineMarkers(elements, result)
 
-        val project = elements.firstOrNull()?.let { psiElement ->
+        val projectInfo = elements.firstOrNull()?.let { psiElement ->
             projects.computeIfAbsent(psiElement.project) {
                 StandardProjectInfo(it)
             }
         } ?: EmptyProjectInfo()
 
         elements.forEach { psiElement ->
-            val marker = marginsFactory.createMarkers(psiElement, project)
+            val marker = marginsFactory.createMarkers(psiElement, projectInfo)
             if (marker != null) {
                 result.add(marker)
             }

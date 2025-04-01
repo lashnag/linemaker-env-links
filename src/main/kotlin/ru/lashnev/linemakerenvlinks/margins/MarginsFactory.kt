@@ -24,6 +24,7 @@ import ru.lashnev.linemakerenvlinks.config.PluginConfig
 import ru.lashnev.linemakerenvlinks.info.ProjectInfo
 import ru.lashnev.linemakerenvlinks.margins.markers.OpenUrlLineMarkerInfo
 import ru.lashnev.linemakerenvlinks.margins.markers.RunLineMarkerInfo
+import ru.lashnev.linemakerenvlinks.utils.LinkGenerator
 
 class MarginsFactory(private val pluginConfig: PluginConfig) {
 

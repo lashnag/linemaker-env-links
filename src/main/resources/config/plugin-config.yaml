@@ -2,7 +2,7 @@ popupActions:
   - fileName: "ApiProperties"
     name: "Открыть рандомную ссылку"
     icon: "/icons/kibana-16x16.svg"
-    urlWithParameters: "https://ya.ru"
+    urlWithParameters: "https://ya.ru/{appName}"
 infraByMethodCalled:
   - callerClass: "org.slf4j.Logger"
     runAction:
