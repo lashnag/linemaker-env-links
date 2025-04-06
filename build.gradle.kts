@@ -23,6 +23,7 @@ dependencies {
         bundledPlugin("com.intellij.java")
         bundledPlugin("org.jetbrains.kotlin")
         bundledPlugin("org.jetbrains.plugins.yaml")
+        bundledPlugin("org.jetbrains.idea.maven")
         bundledPlugin("com.intellij.gradle")
     }
 

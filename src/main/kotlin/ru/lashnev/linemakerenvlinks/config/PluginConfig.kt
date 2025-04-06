@@ -2,30 +2,45 @@ package ru.lashnev.linemakerenvlinks.config
 
 data class PluginConfig(
     var popupActions: List<PopupAction> = emptyList(),
-    var infraByMethodCalled: List<InfraAction> = emptyList(),
-    var infraByAnnotation: List<InfraAction> = emptyList(),
+    var yamlActions: List<YamlAction> = emptyList(),
+    var mavenActions: List<MavenAction> = emptyList(),
+    var methodCalledCodeActions: List<CodeAction> = emptyList(),
+    var annotationCodeActions: List<CodeAction> = emptyList(),
 )
 
 data class PopupAction(
-    val fileName: String? = null,
-    val name: String,
-    val icon: String,
-    val urlWithParameters: String,
+    val fileNameRegExp: String? = null,
+    val openUrlAction: OpenUrlAction,
 )
 
-data class InfraAction(
+data class YamlAction(
+    val keyPathRegExp: String,
+    val marginAction: MarginAction,
+)
+
+data class MavenAction(
+    val keyPathRegExp: String,
+    val valueRegExp: String? = null,
+    val marginAction: MarginAction,
+)
+
+data class CodeAction(
     val callerClass: String,
-    val openUrlAction: Action? = null,
-    val runAction: RunAction? = null,
+    val marginAction: MarginAction,
 )
 
-data class RunAction(
+data class MarginAction(
+    val openUrlAction: OpenUrlAction? = null,
+    val multiplyOpenUrlAction: MultiplyOpenUrlAction? = null,
+)
+
+data class MultiplyOpenUrlAction(
     val description: String,
     val icon: String,
-    val openUrlActions: List<Action>,
+    val openUrlActions: List<OpenUrlAction>,
 )
 
-data class Action(
+data class OpenUrlAction(
     val description: String,
     val icon: String,
     val urlWithParameters: String,

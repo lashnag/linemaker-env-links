@@ -16,12 +16,11 @@
     <description><![CDATA[
     Create links to Company infrastructures.<br>
     <ul>
-        <li>Kibana</li>
-        <li>Vault</li>
-        <li>Openpace</li>
-        <li>TeamCity</li>
-        <li>Common Auth</li>
-        <li>NPD Editor</li>
+        <li>Code called</li>
+        <li>Annotation used</li>
+        <li>Popup menus</li>
+        <li>Maven file</li>
+        <li>Yaml file</li>
     </ul>
   ]]></description>
 
@@ -31,6 +30,7 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
+    <depends>org.jetbrains.idea.maven</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
@@ -38,6 +38,7 @@
         <codeInsight.lineMarkerProvider language="JAVA" implementationClass="ru.lashnev.linemakerenvlinks.margins.MarginLinksProvider"/>
         <codeInsight.lineMarkerProvider language="kotlin" implementationClass="ru.lashnev.linemakerenvlinks.margins.MarginLinksProvider"/>
         <codeInsight.lineMarkerProvider language="yaml" implementationClass="ru.lashnev.linemakerenvlinks.margins.MarginLinksProvider"/>
+        <codeInsight.lineMarkerProvider language="XML" implementationClass="ru.lashnev.linemakerenvlinks.margins.MarginLinksProvider"/>
     </extensions>
     <actions>
         <group id="MyCustomGroup" text="Custom Actions">

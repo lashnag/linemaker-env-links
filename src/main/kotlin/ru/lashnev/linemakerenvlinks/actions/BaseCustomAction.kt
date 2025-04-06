@@ -11,6 +11,7 @@ import com.intellij.psi.PsiDocumentManager
 import ru.lashnev.linemakerenvlinks.info.EmptyProjectInfo
 import ru.lashnev.linemakerenvlinks.info.StandardProjectInfo
 import ru.lashnev.linemakerenvlinks.utils.LinkGenerator
+import ru.lashnev.linemakerenvlinks.utils.getFileNameWithPath
 import ru.lashnev.linemakerenvlinks.utils.loadPluginConfig
 
 abstract class BaseCustomAction : AnAction(), DumbAware {
@@ -21,8 +22,14 @@ abstract class BaseCustomAction : AnAction(), DumbAware {
     override fun actionPerformed(e: AnActionEvent) {
         val popupAction = config.popupActions.getOrNull(actionNumber())
         popupAction?.let {
+            val project = e.project
+            val editor = e.getData(CommonDataKeys.EDITOR)
+            val psiFile = editor?.let {
+                PsiDocumentManager.getInstance(project!!).getPsiFile(it.document)
+            } ?: e.getData(CommonDataKeys.PSI_FILE)
+
             val projectInfo = e.project?.let { StandardProjectInfo(e.project!!) } ?: EmptyProjectInfo()
-            BrowserUtil.browse(linkGenerator.replaceParameters(popupAction.urlWithParameters, projectInfo))
+            BrowserUtil.browse(linkGenerator.replaceParameters(popupAction.openUrlAction.urlWithParameters, psiFile, projectInfo))
         }
     }
 
@@ -40,10 +47,10 @@ abstract class BaseCustomAction : AnAction(), DumbAware {
                 PsiDocumentManager.getInstance(project!!).getPsiFile(it.document)
             } ?: e.getData(CommonDataKeys.PSI_FILE) ?: return
 
-            if (psiFile.name.contains(popupAction.fileName!!, ignoreCase = true)) {
+            if (popupAction.fileNameRegExp == null || Regex(popupAction.fileNameRegExp, RegexOption.IGNORE_CASE).matches(psiFile.getFileNameWithPath() ?: "")) {
                 presentation.isVisible = true
-                presentation.text = popupAction.name
-                presentation.icon = IconLoader.getIcon(popupAction.icon, javaClass)
+                presentation.text = popupAction.openUrlAction.description
+                presentation.icon = IconLoader.getIcon(popupAction.openUrlAction.icon, javaClass)
             } else {
                 presentation.isVisible = false
             }

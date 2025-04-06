@@ -1,29 +1,15 @@
 package ru.lashnev.linemakerenvlinks.utils
 
 import ai.grazie.utils.capitalize
-import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiLiteralExpression
-import com.intellij.psi.PsiMethodCallExpression
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtLiteralStringTemplateEntry
-import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import com.intellij.openapi.project.Project
+import com.intellij.psi.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.yaml.psi.YAMLKeyValue
 import ru.lashnev.linemakerenvlinks.info.ProjectInfo
 
 class LinkGenerator {
 
-    fun replaceParameters(link: String, projectInfo: ProjectInfo): String {
-        var linkWithReplacedParameters = link
-        ProjectInfo::class.java.methods.forEach { method ->
-            val value = method.invoke(projectInfo).toString()
-            val placeholder = "{${method.name}}"
-            linkWithReplacedParameters = linkWithReplacedParameters.replace(placeholder, value)
-        }
-        return linkWithReplacedParameters
-    }
-
-    fun replaceParameters(link: String, psiElement: PsiElement, projectInfo: ProjectInfo): String {
+    fun replaceParameters(link: String, psiElement: PsiElement?, projectInfo: ProjectInfo): String {
         var linkWithReplacedParameters = link
 
         ProjectInfo::class.java.methods.forEach { method ->
@@ -55,6 +41,13 @@ class LinkGenerator {
 
         val andQueryStringParameters = parameters.joinToString(prefix = "\"", postfix = "\"", separator = "\" AND \"")
         linkWithReplacedParameters = linkWithReplacedParameters.replace("{andQueryStringParameters}", andQueryStringParameters)
+
+        val fileNameWithPath = psiElement?.getFileNameWithPath() ?: ""
+        linkWithReplacedParameters.replace("{fileNameWithPath}", fileNameWithPath)
+
+        if (psiElement is YAMLKeyValue) {
+            linkWithReplacedParameters = linkWithReplacedParameters.replace("{yamlValue}", psiElement.valueText)
+        }
 
         return linkWithReplacedParameters
     }
