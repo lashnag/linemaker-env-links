@@ -82,11 +82,17 @@ class MarginsFactory(private val pluginConfig: PluginConfig) {
                     if (constructor != null) {
                         val annotation = constructor.parentOfType<KtAnnotationEntry>()
                         if (annotation != null) {
-                            val reference = annotation.calleeExpression?.reference
-                            val callerClass = when (val resolved = reference?.resolve()) {
-                                is KtClassOrObject -> resolved.fqName?.asString()
-                                is PsiClass -> resolved.qualifiedName
-                                else -> return null
+                            val annotationType = annotation.typeReference?.typeElement
+                            val callerClass = when (annotationType) {
+                                is KtUserType -> {
+                                    val referencedName = annotationType.referenceExpression?.getReferencedNameAsName()?.asString()
+                                    referencedName?.let { name ->
+                                        annotation.containingKtFile.importDirectives.find {
+                                            it.importedFqName?.shortName()?.asString() == name
+                                        }?.importedFqName?.asString() ?: name
+                                    }
+                                }
+                                else -> null
                             }
                             return callerClass?.let { createByAnnotationMarker(callerClass, psiElement, projectInfo) }
                         }
