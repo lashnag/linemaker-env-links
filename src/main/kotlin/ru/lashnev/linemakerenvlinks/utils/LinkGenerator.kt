@@ -49,6 +49,10 @@ class LinkGenerator {
             linkWithReplacedParameters = linkWithReplacedParameters.replace("{yamlValue}", psiElement.valueText)
         }
 
+        psiElement?.project?.basePath?.let {
+            linkWithReplacedParameters = linkWithReplacedParameters.replace("{projectDir}", it)
+        }
+
         return linkWithReplacedParameters
     }
 

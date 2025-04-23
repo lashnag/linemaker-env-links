@@ -18,6 +18,7 @@
 - parameter1 / parameter2 / parameter3 и тд
 - andQueryStringParameters
 - annotationKey (напр для @MyAnnotation(name = "example") надо добавлять через annotationName)
+- projectDir (Можно указывать ссылку на файл в проекте idea://open?file={projectDir}/.chart/config-preprod.yaml)
 
 Чтобы сделать плагин под себя - копируем src/main/resources/config/infra-config-sample.json со своими настройками в src/main/resources/config/infra-config.json
 Тестируем в sandbox на своем окружении через gradle таску :runIde
