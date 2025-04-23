@@ -15,6 +15,7 @@ data class PopupAction(
 
 data class YamlAction(
     val keyPathRegExp: String,
+    val valueRegExp: String? = null,
     val marginAction: MarginAction,
 )
 

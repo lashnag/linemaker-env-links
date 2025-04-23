@@ -12,6 +12,7 @@ popupActions:
 
 yamlActions:
   - keyPathRegExp: "sharedEnvSecretVars\\.\\[[0-9]+\\]\\.secretKeyRefName"
+    valueRegExp: "some-value"
     marginAction:
       openUrlAction:
         description: "Config"

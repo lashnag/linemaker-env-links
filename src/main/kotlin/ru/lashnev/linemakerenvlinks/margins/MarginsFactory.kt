@@ -107,7 +107,11 @@ class MarginsFactory(private val pluginConfig: PluginConfig) {
     private fun getActionByYaml(keyValue: YAMLKeyValue, projectInfo: ProjectInfo): LineMarkerInfo<*>? {
         val fullPath = getFullKeyPathWithIndices(keyValue)
         pluginConfig.yamlActions.forEach { yamlAction ->
-            if (Regex(yamlAction.keyPathRegExp, RegexOption.IGNORE_CASE).matches(fullPath)) {
+            val pathMatch = Regex(yamlAction.keyPathRegExp, RegexOption.IGNORE_CASE).matches(fullPath)
+            val valueMatch = yamlAction.valueRegExp?.let {
+                Regex(yamlAction.valueRegExp, RegexOption.IGNORE_CASE).matches(keyValue.valueText)
+            } ?: true
+            if (pathMatch && valueMatch) {
                 getMarginAction(keyValue, yamlAction.marginAction, projectInfo)?.let { return it }
             }
         }
