@@ -46,6 +46,14 @@ annotationCodeActions:
   - callerClass: "ru.yourcompany.Tracing"
     marginAction:
       openUrlAction:
-        description: "Открыть "
+        description: "Открыть Jaeger"
         icon: "/icons/jaeger-16x16.svg"
         urlWithParameters: "https://jaeger.link/"
+
+interfaceImplementationActions:
+  - callerClass: "graphql.kickstart.tools.GraphQLResolver"
+    marginAction:
+      openUrlAction:
+        description: "Открыть GraphQL Schema"
+        icon: "/icons/graphql-16x16.svg"
+        urlWithParameters: "https://graphql.link/"

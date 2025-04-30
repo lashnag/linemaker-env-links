@@ -43,7 +43,7 @@ class LinkGenerator {
         linkWithReplacedParameters = linkWithReplacedParameters.replace("{andQueryStringParameters}", andQueryStringParameters)
 
         val fileNameWithPath = psiElement?.getFileNameWithPath() ?: ""
-        linkWithReplacedParameters.replace("{fileNameWithPath}", fileNameWithPath)
+        linkWithReplacedParameters = linkWithReplacedParameters.replace("{fileNameWithPath}", fileNameWithPath)
 
         if (psiElement is YAMLKeyValue) {
             linkWithReplacedParameters = linkWithReplacedParameters.replace("{yamlValue}", psiElement.valueText)

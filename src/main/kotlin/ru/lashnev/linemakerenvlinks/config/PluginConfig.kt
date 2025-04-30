@@ -6,6 +6,7 @@ data class PluginConfig(
     var mavenActions: List<MavenAction> = emptyList(),
     var methodCalledCodeActions: List<CodeAction> = emptyList(),
     var annotationCodeActions: List<CodeAction> = emptyList(),
+    var interfaceImplementationActions: List<CodeAction> = emptyList(),
 )
 
 data class PopupAction(

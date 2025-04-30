@@ -7,6 +7,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.parentOfType
 import com.intellij.psi.xml.XmlTag
+import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.idea.base.utils.fqname.fqName
 import org.jetbrains.kotlin.idea.core.receiverType
 import org.jetbrains.kotlin.psi.*
@@ -66,6 +67,16 @@ class MarginsFactory(private val pluginConfig: PluginConfig) {
             }
         }
 
+        val psiClass = psiElement.parentOfType<PsiClass>()
+        if (psiClass != null && !psiClass.isInterface) {
+            if (psiElement != psiClass.nameIdentifier) return null
+            for (entry in psiClass.implementsListTypes) {
+                val interfaceName = entry.resolve()?.qualifiedName ?: continue
+                val marker = createByInterfaceImplementationMarker(interfaceName, psiElement, projectInfo)
+                if (marker != null) return marker
+            }
+        }
+
         return null
     }
 
@@ -96,6 +107,24 @@ class MarginsFactory(private val pluginConfig: PluginConfig) {
                             }
                             return callerClass?.let { createByAnnotationMarker(callerClass, psiElement, projectInfo) }
                         }
+                    }
+                }
+            }
+            is KtClassOrObject -> {
+                val ktClass = psiElement.parent as KtClassOrObject
+
+                if (ktClass is KtClass && ktClass.isInterface()) return null
+                if (psiElement != ktClass.nameIdentifier) return null
+
+                analyze(ktClass) {
+                    for (entry in ktClass.superTypeListEntries) {
+                        val typeRef = entry.typeReference ?: continue
+                        val type = typeRef.type
+                        val symbol = type.expandedSymbol
+                        val interfaceName = symbol?.classId?.asFqNameString() ?: continue
+
+                        val marker = createByInterfaceImplementationMarker(interfaceName, psiElement, projectInfo)
+                        if (marker != null) return marker
                     }
                 }
             }
@@ -143,6 +172,16 @@ class MarginsFactory(private val pluginConfig: PluginConfig) {
 
     private fun createByAnnotationMarker(callerClass: String, psiElement: PsiElement, projectInfo: ProjectInfo): LineMarkerInfo<*>? {
         for (element in pluginConfig.annotationCodeActions) {
+            if (callerClass.startsWith(element.callerClass)) {
+                getMarginAction(psiElement, element.marginAction, projectInfo)?.let { return it }
+            }
+        }
+
+        return null
+    }
+
+    private fun createByInterfaceImplementationMarker(callerClass: String, psiElement: PsiElement, projectInfo: ProjectInfo): LineMarkerInfo<*>? {
+        for (element in pluginConfig.interfaceImplementationActions) {
             if (callerClass.startsWith(element.callerClass)) {
                 getMarginAction(psiElement, element.marginAction, projectInfo)?.let { return it }
             }
