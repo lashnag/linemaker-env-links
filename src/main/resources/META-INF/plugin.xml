@@ -42,6 +42,7 @@
     </extensions>
     <actions>
         <group id="MyCustomGroup" text="Custom Actions">
+            <separator/>
             <action id="Action1" class="ru.lashnev.linemakerenvlinks.actions.CustomAction1" text="Custom Action 1">
                 <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
                 <add-to-group group-id="EditorPopupMenu" anchor="last"/>
