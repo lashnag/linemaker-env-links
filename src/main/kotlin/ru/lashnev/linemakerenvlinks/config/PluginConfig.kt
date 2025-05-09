@@ -10,8 +10,9 @@ data class PluginConfig(
 )
 
 data class PopupAction(
-    val fileNameRegExp: String? = null,
-    val openUrlAction: OpenUrlAction,
+    val fileNameRegExp: String,
+    val openUrlAction: OpenUrlAction? = null,
+    val multiplyOpenUrlAction: MultiplyOpenUrlAction? = null,
 )
 
 data class YamlAction(

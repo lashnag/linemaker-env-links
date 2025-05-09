@@ -63,6 +63,26 @@
                 <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
                 <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             </action>
+            <action id="Action6" class="ru.lashnev.linemakerenvlinks.actions.CustomAction6" text="Custom Action 6">
+                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            </action>
+            <action id="Action7" class="ru.lashnev.linemakerenvlinks.actions.CustomAction7" text="Custom Action 7">
+                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            </action>
+            <action id="Action8" class="ru.lashnev.linemakerenvlinks.actions.CustomAction8" text="Custom Action 8">
+                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            </action>
+            <action id="Action9" class="ru.lashnev.linemakerenvlinks.actions.CustomAction9" text="Custom Action 9">
+                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            </action>
+            <action id="Action10" class="ru.lashnev.linemakerenvlinks.actions.CustomAction10" text="Custom Action 10">
+                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            </action>
         </group>
     </actions>
 </idea-plugin>

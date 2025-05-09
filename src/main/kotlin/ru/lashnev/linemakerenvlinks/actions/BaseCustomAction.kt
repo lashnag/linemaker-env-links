@@ -1,65 +1,94 @@
 package ru.lashnev.linemakerenvlinks.actions
 
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.IconLoader
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiFile
+import ru.lashnev.linemakerenvlinks.config.OpenUrlAction
 import ru.lashnev.linemakerenvlinks.info.EmptyProjectInfo
 import ru.lashnev.linemakerenvlinks.info.StandardProjectInfo
 import ru.lashnev.linemakerenvlinks.utils.LinkGenerator
 import ru.lashnev.linemakerenvlinks.utils.getFileNameWithPath
 import ru.lashnev.linemakerenvlinks.utils.loadPluginConfig
 
-abstract class BaseCustomAction : AnAction(), DumbAware {
+abstract class BaseCustomAction : ActionGroup(), DumbAware {
 
     private val config = loadPluginConfig()
     private val linkGenerator = LinkGenerator()
 
-    override fun actionPerformed(e: AnActionEvent) {
-        val popupAction = config.popupActions.getOrNull(actionNumber())
-        popupAction?.let {
-            val project = e.project
-            val editor = e.getData(CommonDataKeys.EDITOR)
-            val psiFile = editor?.let {
-                PsiDocumentManager.getInstance(project!!).getPsiFile(it.document)
-            } ?: e.getData(CommonDataKeys.PSI_FILE)
+    override fun getChildren(e: AnActionEvent?): Array<AnAction> {
+        val popupAction = config.popupActions.getOrNull(actionNumber()) ?: return emptyArray()
 
-            val projectInfo = e.project?.let { StandardProjectInfo(e.project!!) } ?: EmptyProjectInfo()
-            BrowserUtil.browse(linkGenerator.replaceParameters(popupAction.openUrlAction.urlWithParameters, psiFile, projectInfo))
+        return when {
+            popupAction.multiplyOpenUrlAction != null -> {
+                val actions = mutableListOf<AnAction>()
+                actions.add(Separator.create())
+
+                actions.addAll(
+                    popupAction.multiplyOpenUrlAction.openUrlActions.map { action ->
+                        createUrlAction(action)
+                    }
+                )
+
+                actions.add(Separator.create())
+                actions.toTypedArray()
+            }
+            popupAction.openUrlAction != null -> {
+                arrayOf(createUrlAction(popupAction.openUrlAction))
+            }
+            else -> emptyArray()
         }
     }
 
-    override fun update(e: AnActionEvent) {
-        super.update(e)
-
-        val presentation = e.presentation
-        presentation.isVisible = false
-
-        val popupAction = config.popupActions.getOrNull(actionNumber())
-        popupAction?.let {
-            val project = e.project
-            val editor = e.getData(CommonDataKeys.EDITOR)
-            val psiFile = editor?.let {
-                PsiDocumentManager.getInstance(project!!).getPsiFile(it.document)
-            } ?: e.getData(CommonDataKeys.PSI_FILE) ?: return
-
-            if (popupAction.fileNameRegExp == null || Regex(popupAction.fileNameRegExp, RegexOption.IGNORE_CASE).matches(psiFile.getFileNameWithPath() ?: "")) {
-                presentation.isVisible = true
-                presentation.text = popupAction.openUrlAction.description
-                presentation.icon = IconLoader.getIcon(popupAction.openUrlAction.icon, javaClass)
-            } else {
-                presentation.isVisible = false
+    private fun createUrlAction(action: OpenUrlAction): AnAction {
+        return object : AnAction(action.description, null, IconLoader.getIcon(action.icon, javaClass)) {
+            override fun actionPerformed(e: AnActionEvent) {
+                val psiFile = getPsiFile(e)
+                val projectInfo = e.project?.let { StandardProjectInfo(it) } ?: EmptyProjectInfo()
+                BrowserUtil.browse(linkGenerator.replaceParameters(action.urlWithParameters, psiFile, projectInfo))
             }
         }
     }
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.BGT
+    override fun update(e: AnActionEvent) {
+        val popupAction = config.popupActions.getOrNull(actionNumber()) ?: run {
+            e.presentation.isVisible = false
+            return
+        }
+
+        val psiFile = getPsiFile(e) ?: run {
+            e.presentation.isVisible = false
+            return
+        }
+
+        val isVisible = Regex(popupAction.fileNameRegExp, RegexOption.IGNORE_CASE)
+            .matches(psiFile.getFileNameWithPath() ?: "")
+
+        e.presentation.isVisible = isVisible
+        if (isVisible) {
+            when {
+                popupAction.multiplyOpenUrlAction != null -> {
+                    e.presentation.text = popupAction.multiplyOpenUrlAction.description
+                    e.presentation.icon = IconLoader.getIcon(popupAction.multiplyOpenUrlAction.icon, javaClass)
+                }
+                popupAction.openUrlAction != null -> {
+                    e.presentation.text = popupAction.openUrlAction.description
+                    e.presentation.icon = IconLoader.getIcon(popupAction.openUrlAction.icon, javaClass)
+                }
+            }
+        }
     }
+
+    private fun getPsiFile(e: AnActionEvent): PsiFile? {
+        val editor = e.getData(CommonDataKeys.EDITOR)
+        return editor?.let {
+            PsiDocumentManager.getInstance(e.project!!).getPsiFile(it.document)
+        } ?: e.getData(CommonDataKeys.PSI_FILE)
+    }
+
+    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
     abstract fun actionNumber(): Int
 }
