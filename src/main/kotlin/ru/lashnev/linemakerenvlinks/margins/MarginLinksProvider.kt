@@ -28,9 +28,9 @@ class MarginLinksProvider : LineMarkerProvider {
         } ?: EmptyProjectInfo()
 
         elements.forEach { psiElement ->
-            val marker = marginsFactory.createMarkers(psiElement, projectInfo)
-            if (marker != null) {
-                result.add(marker)
+            val markers = marginsFactory.createMarkers(psiElement, projectInfo)
+            if (markers.isNotEmpty()) {
+                result.addAll(markers)
             }
         }
     }

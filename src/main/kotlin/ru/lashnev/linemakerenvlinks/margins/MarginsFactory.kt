@@ -26,36 +26,28 @@ class MarginsFactory(private val pluginConfig: PluginConfig) {
 
     private val linkGenerator = LinkGenerator()
 
-    fun createMarkers(psiElement: PsiElement, projectInfo: ProjectInfo): LineMarkerInfo<*>? {
-        if (psiElement is PsiIdentifier) {
-            return getActionByJavaCode(psiElement, projectInfo)
+    fun createMarkers(psiElement: PsiElement, projectInfo: ProjectInfo): List<LineMarkerInfo<*>> {
+        return when (psiElement) {
+            is PsiIdentifier -> getActionByJavaCode(psiElement, projectInfo)
+            is LeafPsiElement -> getActionByKotlinCode(psiElement, projectInfo)
+            is YAMLKeyValue -> getActionByYaml(psiElement, projectInfo)
+            is XmlTag -> getActionByXml(psiElement, projectInfo)
+            else -> emptyList()
         }
-
-        if (psiElement is LeafPsiElement) {
-            getActionByKotlinCode(psiElement, projectInfo)?.let { return it }
-        }
-
-        if (psiElement is YAMLKeyValue) {
-            getActionByYaml(psiElement, projectInfo)?.let { return it }
-        }
-
-        if (psiElement is XmlTag) {
-            getActionByXml(psiElement, projectInfo)?.let { return it }
-        }
-
-        return null
     }
 
-    private fun getActionByJavaCode(psiElement: PsiIdentifier, projectInfo: ProjectInfo): LineMarkerInfo<*>? {
+    private fun getActionByJavaCode(psiElement: PsiIdentifier, projectInfo: ProjectInfo): List<LineMarkerInfo<*>> {
         val method = psiElement.parentOfType<PsiMethodCallExpression>()
         if (method != null) {
             val reference = psiElement.parentOfType<PsiReferenceExpression>()
             if (reference != null) {
                 val callerClass = reference.type?.internalCanonicalText
-                return callerClass?.let { createByMethodCalledMarker(callerClass, psiElement, projectInfo) }
+                return callerClass?.let {
+                    createByMethodCalledMarker(it, psiElement, projectInfo)
+                } ?: emptyList()
             }
 
-            return null
+            return emptyList()
         }
 
         val annotation = psiElement.parentOfType<PsiAnnotation>()
@@ -69,25 +61,28 @@ class MarginsFactory(private val pluginConfig: PluginConfig) {
 
         val psiClass = psiElement.parentOfType<PsiClass>()
         if (psiClass != null && !psiClass.isInterface) {
-            if (psiElement != psiClass.nameIdentifier) return null
+            if (psiElement != psiClass.nameIdentifier) return emptyList()
+            val result = mutableListOf<LineMarkerInfo<*>>()
             for (entry in psiClass.implementsListTypes) {
                 val interfaceName = entry.resolve()?.qualifiedName ?: continue
-                val marker = createByInterfaceImplementationMarker(interfaceName, psiElement, projectInfo)
-                if (marker != null) return marker
+                result.addAll(createByInterfaceImplementationMarker(interfaceName, psiElement, projectInfo))
             }
+            return result
         }
 
-        return null
+        return emptyList()
     }
 
-    private fun getActionByKotlinCode(psiElement: LeafPsiElement, projectInfo: ProjectInfo): LineMarkerInfo<*>? {
+    private fun getActionByKotlinCode(psiElement: LeafPsiElement, projectInfo: ProjectInfo): List<LineMarkerInfo<*>> {
         when (psiElement.parent) {
             is KtNameReferenceExpression -> {
                 val nameReference = psiElement.parent as KtNameReferenceExpression
                 if (nameReference.parent is KtCallExpression) {
                     val method = nameReference.parent as KtCallExpression
                     val callerClass = method.receiverType()?.fqName?.asString()
-                    return callerClass?.let { createByMethodCalledMarker(callerClass, psiElement, projectInfo) }
+                    return callerClass?.let {
+                        createByMethodCalledMarker(it, psiElement, projectInfo)
+                    } ?: emptyList()
                 } else {
                     val constructor = psiElement.parentOfType<KtConstructorCalleeExpression>()
                     if (constructor != null) {
@@ -105,7 +100,9 @@ class MarginsFactory(private val pluginConfig: PluginConfig) {
                                 }
                                 else -> null
                             }
-                            return callerClass?.let { createByAnnotationMarker(callerClass, psiElement, projectInfo) }
+                            return callerClass?.let {
+                                createByAnnotationMarker(it, psiElement, projectInfo)
+                            } ?: emptyList()
                         }
                     }
                 }
@@ -113,27 +110,28 @@ class MarginsFactory(private val pluginConfig: PluginConfig) {
             is KtClassOrObject -> {
                 val ktClass = psiElement.parent as KtClassOrObject
 
-                if (ktClass is KtClass && ktClass.isInterface()) return null
-                if (psiElement != ktClass.nameIdentifier) return null
+                if (ktClass is KtClass && ktClass.isInterface()) return emptyList()
+                if (psiElement != ktClass.nameIdentifier) return emptyList()
 
                 analyze(ktClass) {
+                    val result = mutableListOf<LineMarkerInfo<*>>()
                     for (entry in ktClass.superTypeListEntries) {
                         val typeRef = entry.typeReference ?: continue
                         val type = typeRef.type
                         val symbol = type.expandedSymbol
                         val interfaceName = symbol?.classId?.asFqNameString() ?: continue
-
-                        val marker = createByInterfaceImplementationMarker(interfaceName, psiElement, projectInfo)
-                        if (marker != null) return marker
+                        result.addAll(createByInterfaceImplementationMarker(interfaceName, psiElement, projectInfo))
                     }
+                    return result
                 }
             }
         }
 
-        return null
+        return emptyList()
     }
 
-    private fun getActionByYaml(keyValue: YAMLKeyValue, projectInfo: ProjectInfo): LineMarkerInfo<*>? {
+    private fun getActionByYaml(keyValue: YAMLKeyValue, projectInfo: ProjectInfo): List<LineMarkerInfo<*>> {
+        val result = mutableListOf<LineMarkerInfo<*>>()
         val fullPath = getFullKeyPathWithIndices(keyValue)
         pluginConfig.yamlActions.forEach { yamlAction ->
             val pathMatch = Regex(yamlAction.keyPathRegExp, RegexOption.IGNORE_CASE).matches(fullPath)
@@ -141,53 +139,48 @@ class MarginsFactory(private val pluginConfig: PluginConfig) {
                 Regex(yamlAction.valueRegExp, RegexOption.IGNORE_CASE).matches(keyValue.valueText)
             } ?: true
             if (pathMatch && valueMatch) {
-                getMarginAction(keyValue, yamlAction.marginAction, projectInfo)?.let { return it }
+                getMarginAction(keyValue, yamlAction.marginAction, projectInfo)?.let {
+                    result += it
+                }
             }
         }
-        return null
+        return result
     }
 
-    private fun getActionByXml(xmlTag: XmlTag, projectInfo: ProjectInfo): LineMarkerInfo<*>? {
+    private fun getActionByXml(xmlTag: XmlTag, projectInfo: ProjectInfo): List<LineMarkerInfo<*>> {
+        val result = mutableListOf<LineMarkerInfo<*>>()
         val fullPath = getXmlPathWithIndices(xmlTag)
+
         pluginConfig.mavenActions.forEach { mavenAction ->
-            println("Path: $fullPath")
             val keyFit = Regex(mavenAction.keyPathRegExp, RegexOption.IGNORE_CASE).matches(fullPath)
             val valueFit = mavenAction.valueRegExp == null || Regex(mavenAction.valueRegExp, RegexOption.IGNORE_CASE).matches(xmlTag.value.text)
+
             if (keyFit && valueFit) {
-                getMarginAction(xmlTag, mavenAction.marginAction, projectInfo)?.let { return it }
+                getMarginAction(xmlTag, mavenAction.marginAction, projectInfo)?.let {
+                    result += it
+                }
             }
         }
-        return null
+
+        return result
     }
 
-    private fun createByMethodCalledMarker(callerClass: String, psiElement: PsiElement, projectInfo: ProjectInfo): LineMarkerInfo<*>? {
-        for (element in pluginConfig.methodCalledCodeActions) {
-            if (callerClass.startsWith(element.callerClass)) {
-                getMarginAction(psiElement, element.marginAction, projectInfo)?.let { return it }
-            }
-        }
-
-        return null
+    private fun createByMethodCalledMarker(callerClass: String, psiElement: PsiElement, projectInfo: ProjectInfo): List<LineMarkerInfo<*>> {
+        return pluginConfig.methodCalledCodeActions
+            .filter { callerClass.startsWith(it.callerClass) }
+            .mapNotNull { getMarginAction(psiElement, it.marginAction, projectInfo) }
     }
 
-    private fun createByAnnotationMarker(callerClass: String, psiElement: PsiElement, projectInfo: ProjectInfo): LineMarkerInfo<*>? {
-        for (element in pluginConfig.annotationCodeActions) {
-            if (callerClass.startsWith(element.callerClass)) {
-                getMarginAction(psiElement, element.marginAction, projectInfo)?.let { return it }
-            }
-        }
-
-        return null
+    private fun createByAnnotationMarker(callerClass: String, psiElement: PsiElement, projectInfo: ProjectInfo): List<LineMarkerInfo<*>> {
+        return pluginConfig.annotationCodeActions
+            .filter { callerClass.startsWith(it.callerClass) }
+            .mapNotNull { getMarginAction(psiElement, it.marginAction, projectInfo) }
     }
 
-    private fun createByInterfaceImplementationMarker(callerClass: String, psiElement: PsiElement, projectInfo: ProjectInfo): LineMarkerInfo<*>? {
-        for (element in pluginConfig.interfaceImplementationActions) {
-            if (callerClass.startsWith(element.callerClass)) {
-                getMarginAction(psiElement, element.marginAction, projectInfo)?.let { return it }
-            }
-        }
-
-        return null
+    private fun createByInterfaceImplementationMarker(callerClass: String, psiElement: PsiElement, projectInfo: ProjectInfo): List<LineMarkerInfo<*>> {
+        return pluginConfig.interfaceImplementationActions
+            .filter { callerClass.startsWith(it.callerClass) }
+            .mapNotNull { getMarginAction(psiElement, it.marginAction, projectInfo) }
     }
 
     private fun getMarginAction(psiElement: PsiElement, marginAction: MarginAction, projectInfo: ProjectInfo): LineMarkerInfo<*>? {

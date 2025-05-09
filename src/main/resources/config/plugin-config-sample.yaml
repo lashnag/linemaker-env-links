@@ -1,14 +1,20 @@
 popupActions:
-  - fileNameRegExp:
+  - fileNameRegExp: ".*"
     openUrlAction:
       description: "Master"
       icon: "/icons/gitlab-16x15.svg"
       urlWithParameters: "https://gitlab.link/java/business/{appName}/-/tree/master/{fileNameWithPath}"
   - fileNameRegExp: "^(?!.*Test\\.(java|kt)$).*\\.(java|kt)$"
-    openUrlAction:
+    multiplyOpenUrlAction:
       description: "Coverage"
       icon: "/icons/sonarqube-16x15.svg"
-      urlWithParameters: "https://sonar.link/code?id={appName}-master&selected={appName}-master:{fileNameWithPath}"
+      openUrlActions:
+        - description: "Reviews сoverage"
+          icon: "/icons/sonarqube-16x15.svg"
+          urlWithParameters: "https://sonar.rev/code?id={appName}-master&selected={appName}-master:{fileNameWithPath}"
+        - description: "Master сoverage"
+          icon: "/icons/sonarqube-16x15.svg"
+          urlWithParameters: "https://sonar.dev/code?id={appName}-master&selected={appName}-master:{fileNameWithPath}"
 
 yamlActions:
   - keyPathRegExp: "sharedEnvSecretVars\\.\\[[0-9]+\\]\\.secretKeyRefName"

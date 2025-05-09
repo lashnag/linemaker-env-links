@@ -41,48 +41,46 @@
         <codeInsight.lineMarkerProvider language="XML" implementationClass="ru.lashnev.linemakerenvlinks.margins.MarginLinksProvider"/>
     </extensions>
     <actions>
-        <group id="MyCustomGroup" text="Custom Actions">
-            <separator/>
-            <action id="Action1" class="ru.lashnev.linemakerenvlinks.actions.CustomAction1" text="Custom Action 1">
-                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            </action>
-            <action id="Action2" class="ru.lashnev.linemakerenvlinks.actions.CustomAction2" text="Custom Action 2">
-                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            </action>
-            <action id="Action3" class="ru.lashnev.linemakerenvlinks.actions.CustomAction3" text="Custom Action 3">
-                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            </action>
-            <action id="Action4" class="ru.lashnev.linemakerenvlinks.actions.CustomAction4" text="Custom Action 4">
-                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            </action>
-            <action id="Action5" class="ru.lashnev.linemakerenvlinks.actions.CustomAction5" text="Custom Action 5">
-                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            </action>
-            <action id="Action6" class="ru.lashnev.linemakerenvlinks.actions.CustomAction6" text="Custom Action 6">
-                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            </action>
-            <action id="Action7" class="ru.lashnev.linemakerenvlinks.actions.CustomAction7" text="Custom Action 7">
-                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            </action>
-            <action id="Action8" class="ru.lashnev.linemakerenvlinks.actions.CustomAction8" text="Custom Action 8">
-                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            </action>
-            <action id="Action9" class="ru.lashnev.linemakerenvlinks.actions.CustomAction9" text="Custom Action 9">
-                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            </action>
-            <action id="Action10" class="ru.lashnev.linemakerenvlinks.actions.CustomAction10" text="Custom Action 10">
-                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            </action>
+        <separator/>
+        <group id="Action1" class="ru.lashnev.linemakerenvlinks.actions.CustomAction1" text="Custom Action 1">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+        <group id="Action2" class="ru.lashnev.linemakerenvlinks.actions.CustomAction2" text="Custom Action 2">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+        <group id="Action3" class="ru.lashnev.linemakerenvlinks.actions.CustomAction3" text="Custom Action 3">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+        <group id="Action4" class="ru.lashnev.linemakerenvlinks.actions.CustomAction4" text="Custom Action 4">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+        <group id="Action5" class="ru.lashnev.linemakerenvlinks.actions.CustomAction5" text="Custom Action 5">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+        <group id="Action6" class="ru.lashnev.linemakerenvlinks.actions.CustomAction6" text="Custom Action 6">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+        <group id="Action7" class="ru.lashnev.linemakerenvlinks.actions.CustomAction7" text="Custom Action 7">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+        <group id="Action8" class="ru.lashnev.linemakerenvlinks.actions.CustomAction8" text="Custom Action 8">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+        <group id="Action9" class="ru.lashnev.linemakerenvlinks.actions.CustomAction9" text="Custom Action 9">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+        <group id="Action10" class="ru.lashnev.linemakerenvlinks.actions.CustomAction10" text="Custom Action 10">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </group>
     </actions>
 </idea-plugin>
