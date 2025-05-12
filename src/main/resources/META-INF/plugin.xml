@@ -41,7 +41,6 @@
         <codeInsight.lineMarkerProvider language="XML" implementationClass="ru.lashnev.linemakerenvlinks.margins.MarginLinksProvider"/>
     </extensions>
     <actions>
-        <separator/>
         <group id="Action1" class="ru.lashnev.linemakerenvlinks.actions.CustomAction1" text="Custom Action 1">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>

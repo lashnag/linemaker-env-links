@@ -36,7 +36,12 @@ abstract class BaseCustomAction : ActionGroup(), DumbAware {
                 actions.toTypedArray()
             }
             popupAction.openUrlAction != null -> {
-                arrayOf(createUrlAction(popupAction.openUrlAction))
+                val actions = mutableListOf<AnAction>()
+                if (actionNumber() == 0) {
+                    actions.add(Separator.create())
+                }
+                actions.add(createUrlAction(popupAction.openUrlAction))
+                actions.toTypedArray()
             }
             else -> emptyArray()
         }
