@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "ru.lashnev"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenLocal()
@@ -45,7 +45,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("233")
-        untilBuild.set("243.*")
+        untilBuild.set("299.*")
     }
 
     signPlugin {
