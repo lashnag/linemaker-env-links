@@ -1,6 +1,7 @@
 package ru.lashnev.linemakerenvlinks.utils
 
 import ai.grazie.utils.capitalize
+import com.intellij.dvcs.repo.VcsRepositoryManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import org.jetbrains.kotlin.psi.*
@@ -44,6 +45,10 @@ class LinkGenerator {
 
         val fileNameWithPath = psiElement?.getFileNameWithPath() ?: ""
         linkWithReplacedParameters = linkWithReplacedParameters.replace("{fileNameWithPath}", fileNameWithPath)
+
+        psiElement?.project?.let {
+            linkWithReplacedParameters = linkWithReplacedParameters.replace("{currentBranchName}", getCurrentGitBranch(it))
+        }
 
         if (psiElement is YAMLKeyValue) {
             linkWithReplacedParameters = linkWithReplacedParameters.replace("{yamlValue}", psiElement.valueText)
@@ -120,5 +125,11 @@ class LinkGenerator {
         }
 
         return parameters
+    }
+
+    fun getCurrentGitBranch(project: Project): String {
+        val repositoryManager = VcsRepositoryManager.getInstance(project)
+        val repository = repositoryManager.getRepositories().firstOrNull()
+        return repository?.currentBranchName ?: ""
     }
 }
